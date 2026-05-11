@@ -21,7 +21,7 @@ import java.util.Optional;
  * @author dsimanvicius
  * @version 1.0
  */
-public class ParcelService {
+public class Parcelservice {
 
     /** Shared in-memory store. */
     private final List<Parcel> store = new ArrayList<>();
@@ -29,7 +29,7 @@ public class ParcelService {
     /**
      * Constructs a {@code ParcelService} pre-populated with sample data.
      */
-    public ParcelService() {
+    public Parcelservice() {
         seedData();
     }
 

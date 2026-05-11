@@ -50,9 +50,6 @@ public class PackageItem {
         this.categoryCode = categoryCode;
     }
 
-    // ------------------------------------------------------------------ //
-    //  Getters & Setters
-    // ------------------------------------------------------------------ //
 
     /**
      * Returns the item identifier.
