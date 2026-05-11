@@ -1,11 +1,18 @@
 package lt.viko.eif.dsimanvicius.PI24SN.task3.resource;
 
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lt.viko.eif.dsimanvicius.PI24SN.task3.model.Parcel;
-import lt.viko.eif.dsimanvicius.PI24SN.task3.service.Parcelservice;
+import lt.viko.eif.dsimanvicius.PI24SN.task3.service.ParcelService;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,11 +24,11 @@ import java.util.Optional;
  * <table border="1">
  *   <caption>Available endpoints</caption>
  *   <tr><th>Method</th><th>Path</th><th>Description</th></tr>
- *   <tr><td>GET</td>   <td>/api/parcels</td>        <td>Retrieve all parcels</td></tr>
- *   <tr><td>GET</td>   <td>/api/parcels/{id}</td>   <td>Retrieve parcel by id</td></tr>
- *   <tr><td>POST</td>  <td>/api/parcels</td>        <td>Create a new parcel</td></tr>
- *   <tr><td>PUT</td>   <td>/api/parcels/{id}</td>   <td>Update existing parcel</td></tr>
- *   <tr><td>DELETE</td><td>/api/parcels/{id}</td>   <td>Delete a parcel</td></tr>
+ *   <tr><td>GET</td>   <td>/api/parcels</td>       <td>Retrieve all parcels</td></tr>
+ *   <tr><td>GET</td>   <td>/api/parcels/{id}</td>  <td>Retrieve parcel by id</td></tr>
+ *   <tr><td>POST</td>  <td>/api/parcels</td>       <td>Create a new parcel</td></tr>
+ *   <tr><td>PUT</td>   <td>/api/parcels/{id}</td>  <td>Update existing parcel</td></tr>
+ *   <tr><td>DELETE</td><td>/api/parcels/{id}</td>  <td>Delete a parcel</td></tr>
  * </table>
  *
  * @author dsimanvicius
@@ -33,7 +40,7 @@ import java.util.Optional;
 public class ParcelResource {
 
     /** Service layer handling all persistence logic. */
-    private final Parcelservice parcelService = new Parcelservice();
+    private final ParcelService parcelService = new ParcelService();
 
     /**
      * Retrieves every parcel stored in the system.
@@ -72,7 +79,6 @@ public class ParcelResource {
      * Creates a new parcel.
      *
      * <p>HTTP {@code POST /api/parcels}</p>
-     * <p>Request body must be a valid JSON representation of {@link Parcel}.</p>
      *
      * @param parcel deserialized parcel from the request body
      * @return {@code 201 Created} with the saved parcel including its assigned id

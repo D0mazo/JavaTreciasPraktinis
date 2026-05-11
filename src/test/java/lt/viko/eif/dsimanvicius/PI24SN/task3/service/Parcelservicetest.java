@@ -11,14 +11,14 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for {@link lt.viko.eif.dsimanvicius.PI24SN.task3.service.Parcelservice}.
+ * Unit tests for {@link ParcelService}.
  *
  * @author dsimanvicius
  * @version 1.0
  */
 class Parcelservicetest {
 
-    private Parcelservice service;
+    private ParcelService service;
 
     /**
      * Creates a fresh service instance (with seed data) before each test.

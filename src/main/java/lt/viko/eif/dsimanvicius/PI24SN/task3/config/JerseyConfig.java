@@ -4,20 +4,18 @@ import lt.viko.eif.dsimanvicius.PI24SN.task3.resource.ParcelResource;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.ApplicationPath;
-
 /**
  * Jersey (JAX-RS) application configuration.
  *
- * <p>Sets the root path of the REST API to {@code /api} and registers
- * all resource classes. Annotated with {@link Component} so Spring Boot
- * discovers and manages it automatically.</p>
+ * <p>Registers all JAX-RS resource classes. The base path {@code /api} is
+ * configured via {@code spring.jersey.application-path} in
+ * {@code application.properties}, making the parcel endpoint available at
+ * {@code http://localhost:8080/api/parcels}.</p>
  *
  * @author dsimanvicius
  * @version 1.0
  */
 @Component
-@ApplicationPath("/api")
 public class JerseyConfig extends ResourceConfig {
 
     /**
