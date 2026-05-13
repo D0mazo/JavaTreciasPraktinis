@@ -18,16 +18,33 @@ repositories {
 }
 
 dependencies {
+	// JAX-RS via Jersey
 	implementation 'org.springframework.boot:spring-boot-starter-jersey'
+
+	// Core Spring Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	// JAXB - būtina WADL generavimui
+	// Spring Data JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// SQLite driver
+	implementation 'org.xerial:sqlite-jdbc:3.45.1.0'
+
+	// SQLite dialect for Hibernate
+	implementation 'org.hibernate.orm:hibernate-community-dialects:6.4.4.Final'
+
+	// JAXB - required for WADL generation
 	implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.4'
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
 
+	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// Dev tools
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'

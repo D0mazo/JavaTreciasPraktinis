@@ -1,210 +1,174 @@
 package lt.viko.eif.dsimanvicius.PI24SN.task3.model;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a logistics parcel that groups one or more {@link PackageItem} objects.
+ * JPA entity representing a logistics parcel stored in the SQLite database.
  *
- * <p>A {@code Parcel} is the primary domain entity exposed by the REST API.
- * It holds delivery metadata and an ordered list of items packed inside it.</p>
+ * <p>Mapped to the {@code parcel} table. Each parcel owns a collection of
+ * {@link PackageItem} objects stored in the {@code package_item} table,
+ * linked by a one-to-many relationship with cascade persistence.</p>
  *
  * @author dsimanvicius
  * @version 1.0
  */
+@Entity
+@Table(name = "parcel")
 public class Parcel {
 
-    /** Unique identifier of the parcel. */
+    /** Primary key — auto-incremented by the database. */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    /** Tracking number visible on the shipping label. */
+    /** Tracking number printed on the shipping label. */
+    @Column(name = "tracking_number", nullable = false, unique = true)
     private String trackingNumber;
 
     /** Full name of the recipient. */
+    @Column(name = "recipient_name", nullable = false)
     private String recipientName;
 
-    /** Delivery address as a single formatted string. */
+    /** Formatted delivery address. */
+    @Column(name = "delivery_address", nullable = false)
     private String deliveryAddress;
 
-    /** Total declared weight of the parcel in kilograms. */
+    /** Total declared weight in kilograms. */
+    @Column(name = "total_weight_kg", nullable = false)
     private float totalWeightKg;
 
     /** Whether the parcel has already been delivered. */
+    @Column(nullable = false)
     private boolean delivered;
 
     /**
      * Priority class: 'S' = Standard, 'E' = Express, 'O' = Overnight.
      */
+    @Column(name = "priority_class", nullable = false)
     private char priorityClass;
 
-    /** Ordered list of items contained in this parcel. */
-    private List<PackageItem> items;
+    /**
+     * Items contained in this parcel.
+     * Cascade ALL ensures items are saved/deleted with the parcel.
+     */
+    @OneToMany(mappedBy = "parcel",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
+    private List<PackageItem> items = new ArrayList<>();
 
     /**
-     * Default no-argument constructor required for JAX-RS / JSON serialisation.
-     * Initialises {@code items} to an empty list.
+     * Default no-argument constructor required by JPA and JAX-RS serialisation.
      */
     public Parcel() {
-        this.items = new ArrayList<>();
     }
 
     /**
      * Constructs a fully initialised {@code Parcel}.
      *
-     * @param id              unique parcel identifier
-     * @param trackingNumber  human-readable tracking code
+     * @param trackingNumber  shipping label tracking code
      * @param recipientName   full name of the recipient
      * @param deliveryAddress formatted delivery address
      * @param totalWeightKg   declared total weight in kg
      * @param delivered       {@code true} if already delivered
      * @param priorityClass   single-character priority code
-     * @param items           list of {@link PackageItem} objects; must not be {@code null}
      */
-    public Parcel(int id, String trackingNumber, String recipientName,
+    public Parcel(String trackingNumber, String recipientName,
                   String deliveryAddress, float totalWeightKg,
-                  boolean delivered, char priorityClass,
-                  List<PackageItem> items) {
-        this.id              = id;
+                  boolean delivered, char priorityClass) {
         this.trackingNumber  = trackingNumber;
         this.recipientName   = recipientName;
         this.deliveryAddress = deliveryAddress;
         this.totalWeightKg   = totalWeightKg;
         this.delivered       = delivered;
         this.priorityClass   = priorityClass;
-        this.items           = items != null ? items : new ArrayList<>();
     }
 
     // ------------------------------------------------------------------ //
     //  Getters & Setters
     // ------------------------------------------------------------------ //
 
-    /**
-     * Returns the parcel identifier.
-     *
-     * @return parcel id
-     */
+    /** @return parcel primary key */
     public int getId() { return id; }
 
-    /**
-     * Sets the parcel identifier.
-     *
-     * @param id parcel id
-     */
+    /** @param id parcel primary key */
     public void setId(int id) { this.id = id; }
 
-    /**
-     * Returns the tracking number.
-     *
-     * @return tracking number string
-     */
+    /** @return tracking number */
     public String getTrackingNumber() { return trackingNumber; }
 
-    /**
-     * Sets the tracking number.
-     *
-     * @param trackingNumber tracking number string
-     */
+    /** @param trackingNumber tracking number */
     public void setTrackingNumber(String trackingNumber) {
         this.trackingNumber = trackingNumber;
     }
 
-    /**
-     * Returns the recipient's full name.
-     *
-     * @return recipient name
-     */
+    /** @return recipient full name */
     public String getRecipientName() { return recipientName; }
 
-    /**
-     * Sets the recipient's full name.
-     *
-     * @param recipientName recipient name
-     */
+    /** @param recipientName recipient full name */
     public void setRecipientName(String recipientName) {
         this.recipientName = recipientName;
     }
 
-    /**
-     * Returns the delivery address.
-     *
-     * @return delivery address
-     */
+    /** @return delivery address */
     public String getDeliveryAddress() { return deliveryAddress; }
 
-    /**
-     * Sets the delivery address.
-     *
-     * @param deliveryAddress formatted delivery address
-     */
+    /** @param deliveryAddress delivery address */
     public void setDeliveryAddress(String deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
     }
 
-    /**
-     * Returns the total declared weight in kilograms.
-     *
-     * @return weight (kg)
-     */
+    /** @return total weight in kg */
     public float getTotalWeightKg() { return totalWeightKg; }
 
-    /**
-     * Sets the total declared weight.
-     *
-     * @param totalWeightKg weight (kg)
-     */
+    /** @param totalWeightKg total weight in kg */
     public void setTotalWeightKg(float totalWeightKg) {
         this.totalWeightKg = totalWeightKg;
     }
 
-    /**
-     * Returns whether the parcel has been delivered.
-     *
-     * @return {@code true} if delivered
-     */
+    /** @return {@code true} if delivered */
     public boolean isDelivered() { return delivered; }
 
-    /**
-     * Sets the delivery status.
-     *
-     * @param delivered {@code true} if delivered
-     */
+    /** @param delivered delivery status */
     public void setDelivered(boolean delivered) { this.delivered = delivered; }
 
-    /**
-     * Returns the priority class code.
-     *
-     * @return priority class character
-     */
+    /** @return priority class character */
     public char getPriorityClass() { return priorityClass; }
 
-    /**
-     * Sets the priority class code.
-     *
-     * @param priorityClass priority class character
-     */
+    /** @param priorityClass priority class character */
     public void setPriorityClass(char priorityClass) {
         this.priorityClass = priorityClass;
     }
 
-    /**
-     * Returns the list of items in this parcel.
-     *
-     * @return mutable list of {@link PackageItem} objects
-     */
+    /** @return mutable list of items */
     public List<PackageItem> getItems() { return items; }
 
     /**
-     * Replaces the item list entirely.
+     * Replaces the item list and re-links each item's parcel reference.
      *
-     * @param items new list of {@link PackageItem} objects
+     * @param items new list of items
      */
-    public void setItems(List<PackageItem> items) { this.items = items; }
+    public void setItems(List<PackageItem> items) {
+        this.items.clear();
+        if (items != null) {
+            items.forEach(item -> {
+                item.setParcel(this);
+                this.items.add(item);
+            });
+        }
+    }
 
-    /**
-     * Returns a human-readable representation of this parcel.
-     *
-     * @return string representation
-     */
     @Override
     public String toString() {
         return "Parcel{"

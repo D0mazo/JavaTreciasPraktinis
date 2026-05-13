@@ -7,10 +7,9 @@ import org.springframework.stereotype.Component;
 /**
  * Jersey (JAX-RS) application configuration.
  *
- * <p>Registers all JAX-RS resource classes. The base path {@code /api} is
- * configured via {@code spring.jersey.application-path} in
- * {@code application.properties}, making the parcel endpoint available at
- * {@code http://localhost:8080/api/parcels}.</p>
+ * <p>Registers JAX-RS resource classes with the Jersey servlet.
+ * The base path {@code /api} is set via
+ * {@code spring.jersey.application-path} in {@code application.properties}.</p>
  *
  * @author dsimanvicius
  * @version 1.0

@@ -12,42 +12,55 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lt.viko.eif.dsimanvicius.PI24SN.task3.model.Parcel;
 import lt.viko.eif.dsimanvicius.PI24SN.task3.service.ParcelService;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * JAX-RS REST resource that exposes CRUD operations for {@link Parcel} entities.
+ * JAX-RS REST resource exposing CRUD operations for {@link Parcel} entities.
  *
- * <p>Base path: {@code /api/parcels}</p>
+ * <p>All data is persisted to and retrieved from the SQLite database via
+ * {@link ParcelService}. Annotated with {@link Component} so Spring can
+ * inject the service dependency.</p>
  *
  * <table border="1">
- *   <caption>Available endpoints</caption>
+ *   <caption>Endpoints</caption>
  *   <tr><th>Method</th><th>Path</th><th>Description</th></tr>
- *   <tr><td>GET</td>   <td>/api/parcels</td>       <td>Retrieve all parcels</td></tr>
- *   <tr><td>GET</td>   <td>/api/parcels/{id}</td>  <td>Retrieve parcel by id</td></tr>
- *   <tr><td>POST</td>  <td>/api/parcels</td>       <td>Create a new parcel</td></tr>
- *   <tr><td>PUT</td>   <td>/api/parcels/{id}</td>  <td>Update existing parcel</td></tr>
- *   <tr><td>DELETE</td><td>/api/parcels/{id}</td>  <td>Delete a parcel</td></tr>
+ *   <tr><td>GET</td>   <td>/api/parcels</td>      <td>All parcels</td></tr>
+ *   <tr><td>GET</td>   <td>/api/parcels/{id}</td> <td>Parcel by id</td></tr>
+ *   <tr><td>POST</td>  <td>/api/parcels</td>      <td>Create parcel</td></tr>
+ *   <tr><td>PUT</td>   <td>/api/parcels/{id}</td> <td>Update parcel</td></tr>
+ *   <tr><td>DELETE</td><td>/api/parcels/{id}</td> <td>Delete parcel</td></tr>
  * </table>
  *
  * @author dsimanvicius
  * @version 1.0
  */
+@Component
 @Path("/parcels")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ParcelResource {
 
-    /** Service layer handling all persistence logic. */
-    private final ParcelService parcelService = new ParcelService();
+    /** Service layer providing database-backed CRUD operations. */
+    private final ParcelService parcelService;
 
     /**
-     * Retrieves every parcel stored in the system.
+     * Constructs the resource with the injected service.
+     *
+     * @param parcelService service handling persistence logic
+     */
+    public ParcelResource(ParcelService parcelService) {
+        this.parcelService = parcelService;
+    }
+
+    /**
+     * Retrieves all parcels from the database.
      *
      * <p>HTTP {@code GET /api/parcels}</p>
      *
-     * @return {@code 200 OK} with a JSON array of all parcels
+     * @return {@code 200 OK} with JSON array of all parcels
      */
     @GET
     public Response getAllParcels() {
@@ -56,12 +69,12 @@ public class ParcelResource {
     }
 
     /**
-     * Retrieves a single parcel by its unique identifier.
+     * Retrieves a single parcel by id.
      *
      * <p>HTTP {@code GET /api/parcels/{id}}</p>
      *
-     * @param id path parameter – parcel identifier
-     * @return {@code 200 OK} with the parcel JSON, or {@code 404 Not Found}
+     * @param id parcel identifier
+     * @return {@code 200 OK} with parcel JSON, or {@code 404 Not Found}
      */
     @GET
     @Path("/{id}")
@@ -76,12 +89,12 @@ public class ParcelResource {
     }
 
     /**
-     * Creates a new parcel.
+     * Creates and persists a new parcel.
      *
      * <p>HTTP {@code POST /api/parcels}</p>
      *
-     * @param parcel deserialized parcel from the request body
-     * @return {@code 201 Created} with the saved parcel including its assigned id
+     * @param parcel parcel data from request body
+     * @return {@code 201 Created} with the saved parcel
      */
     @POST
     public Response createParcel(Parcel parcel) {
@@ -90,13 +103,13 @@ public class ParcelResource {
     }
 
     /**
-     * Fully replaces an existing parcel.
+     * Replaces an existing parcel.
      *
      * <p>HTTP {@code PUT /api/parcels/{id}}</p>
      *
-     * @param id     path parameter – id of the parcel to replace
-     * @param parcel replacement parcel data from the request body
-     * @return {@code 200 OK} with the updated parcel, or {@code 404 Not Found}
+     * @param id     id of the parcel to replace
+     * @param parcel replacement data from request body
+     * @return {@code 200 OK} with updated parcel, or {@code 404 Not Found}
      */
     @PUT
     @Path("/{id}")
@@ -111,11 +124,11 @@ public class ParcelResource {
     }
 
     /**
-     * Deletes a parcel identified by its id.
+     * Deletes a parcel and all its items.
      *
      * <p>HTTP {@code DELETE /api/parcels/{id}}</p>
      *
-     * @param id path parameter – id of the parcel to delete
+     * @param id id of the parcel to delete
      * @return {@code 204 No Content} on success, or {@code 404 Not Found}
      */
     @DELETE
