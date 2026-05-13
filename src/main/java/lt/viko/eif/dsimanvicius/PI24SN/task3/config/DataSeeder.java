@@ -5,7 +5,6 @@ import lt.viko.eif.dsimanvicius.PI24SN.task3.model.Parcel;
 import lt.viko.eif.dsimanvicius.PI24SN.task3.repository.ParcelRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
 import java.util.Arrays;
 
 /**
@@ -70,7 +69,5 @@ public class DataSeeder implements CommandLineRunner {
 
         parcelRepository.save(parcel1);
         parcelRepository.save(parcel2);
-
-        System.out.println("✅ Database seeded with 2 sample parcels.");
     }
 }

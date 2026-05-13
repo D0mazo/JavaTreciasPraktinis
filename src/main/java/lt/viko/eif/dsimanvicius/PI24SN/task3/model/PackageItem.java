@@ -73,10 +73,6 @@ public class PackageItem {
         this.categoryCode = categoryCode;
     }
 
-    // ------------------------------------------------------------------ //
-    //  Getters & Setters
-    // ------------------------------------------------------------------ //
-
     /** @return item primary key */
     public int getId() { return id; }
 

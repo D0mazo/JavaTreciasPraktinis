@@ -95,10 +95,6 @@ public class Parcel {
         this.priorityClass   = priorityClass;
     }
 
-    // ------------------------------------------------------------------ //
-    //  Getters & Setters
-    // ------------------------------------------------------------------ //
-
     /** @return parcel primary key */
     public int getId() { return id; }
 

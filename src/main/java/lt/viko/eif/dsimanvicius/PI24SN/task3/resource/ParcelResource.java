@@ -8,21 +8,25 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
+import lt.viko.eif.dsimanvicius.PI24SN.task3.model.Link;
 import lt.viko.eif.dsimanvicius.PI24SN.task3.model.Parcel;
+import lt.viko.eif.dsimanvicius.PI24SN.task3.model.ParcelResponse;
 import lt.viko.eif.dsimanvicius.PI24SN.task3.service.ParcelService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * JAX-RS REST resource exposing CRUD operations for {@link Parcel} entities.
  *
- * <p>All data is persisted to and retrieved from the SQLite database via
- * {@link ParcelService}. Annotated with {@link Component} so Spring can
- * inject the service dependency.</p>
+ * <p>All responses are enriched with HATEOAS hypermedia links that guide
+ * the client toward available next actions, following REST Level 3 maturity.</p>
  *
  * <table border="1">
  *   <caption>Endpoints</caption>
@@ -46,6 +50,10 @@ public class ParcelResource {
     /** Service layer providing database-backed CRUD operations. */
     private final ParcelService parcelService;
 
+    /** JAX-RS context providing the base URI for building HATEOAS links. */
+    @Context
+    private UriInfo uriInfo;
+
     /**
      * Constructs the resource with the injected service.
      *
@@ -56,32 +64,35 @@ public class ParcelResource {
     }
 
     /**
-     * Retrieves all parcels from the database.
+     * Retrieves all parcels, each enriched with HATEOAS links.
      *
      * <p>HTTP {@code GET /api/parcels}</p>
      *
-     * @return {@code 200 OK} with JSON array of all parcels
+     * @return {@code 200 OK} with JSON array of {@link ParcelResponse} objects
      */
     @GET
     public Response getAllParcels() {
-        List<Parcel> parcels = parcelService.findAll();
-        return Response.ok(parcels).build();
+        List<ParcelResponse> responses = parcelService.findAll()
+                .stream()
+                .map(parcel -> buildResponse(parcel))
+                .collect(Collectors.toList());
+        return Response.ok(responses).build();
     }
 
     /**
-     * Retrieves a single parcel by id.
+     * Retrieves a single parcel by id with HATEOAS links.
      *
      * <p>HTTP {@code GET /api/parcels/{id}}</p>
      *
      * @param id parcel identifier
-     * @return {@code 200 OK} with parcel JSON, or {@code 404 Not Found}
+     * @return {@code 200 OK} with {@link ParcelResponse}, or {@code 404 Not Found}
      */
     @GET
     @Path("/{id}")
     public Response getParcelById(@PathParam("id") int id) {
         Optional<Parcel> result = parcelService.findById(id);
         if (result.isPresent()) {
-            return Response.ok(result.get()).build();
+            return Response.ok(buildResponse(result.get())).build();
         }
         return Response.status(Response.Status.NOT_FOUND)
                 .entity("{\"error\":\"Parcel with id " + id + " not found\"}")
@@ -89,34 +100,36 @@ public class ParcelResource {
     }
 
     /**
-     * Creates and persists a new parcel.
+     * Creates and persists a new parcel, returning it with HATEOAS links.
      *
      * <p>HTTP {@code POST /api/parcels}</p>
      *
      * @param parcel parcel data from request body
-     * @return {@code 201 Created} with the saved parcel
+     * @return {@code 201 Created} with the saved {@link ParcelResponse}
      */
     @POST
     public Response createParcel(Parcel parcel) {
         Parcel saved = parcelService.save(parcel);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+        return Response.status(Response.Status.CREATED)
+                .entity(buildResponse(saved))
+                .build();
     }
 
     /**
-     * Replaces an existing parcel.
+     * Replaces an existing parcel, returning the updated version with HATEOAS links.
      *
      * <p>HTTP {@code PUT /api/parcels/{id}}</p>
      *
      * @param id     id of the parcel to replace
      * @param parcel replacement data from request body
-     * @return {@code 200 OK} with updated parcel, or {@code 404 Not Found}
+     * @return {@code 200 OK} with updated {@link ParcelResponse}, or {@code 404}
      */
     @PUT
     @Path("/{id}")
     public Response updateParcel(@PathParam("id") int id, Parcel parcel) {
         Optional<Parcel> updated = parcelService.update(id, parcel);
         if (updated.isPresent()) {
-            return Response.ok(updated.get()).build();
+            return Response.ok(buildResponse(updated.get())).build();
         }
         return Response.status(Response.Status.NOT_FOUND)
                 .entity("{\"error\":\"Parcel with id " + id + " not found\"}")
@@ -141,5 +154,38 @@ public class ParcelResource {
         return Response.status(Response.Status.NOT_FOUND)
                 .entity("{\"error\":\"Parcel with id " + id + " not found\"}")
                 .build();
+    }
+
+    /**
+     * Wraps a {@link Parcel} in a {@link ParcelResponse} and attaches
+     * four standard HATEOAS links: self, update, delete, and all.
+     *
+     * @param parcel the parcel to wrap
+     * @return response object with hypermedia links attached
+     */
+    private ParcelResponse buildResponse(Parcel parcel) {
+        String base = getBaseUrl();
+        String self = base + "/" + parcel.getId();
+
+        ParcelResponse response = new ParcelResponse(parcel);
+        response.addLink(new Link("self",   self,  "GET"));
+        response.addLink(new Link("update", self,  "PUT"));
+        response.addLink(new Link("delete", self,  "DELETE"));
+        response.addLink(new Link("all",    base,  "GET"));
+        return response;
+    }
+
+    /**
+     * Returns the base URL for the parcels resource.
+     * Uses {@link UriInfo} when available, falls back to a hardcoded default.
+     *
+     * @return base URL string e.g. {@code http://localhost:8080/api/parcels}
+     */
+    private String getBaseUrl() {
+        try {
+            return uriInfo.getBaseUri().toString() + "parcels";
+        } catch (Exception e) {
+            return "http://localhost:8080/api/parcels";
+        }
     }
 }
