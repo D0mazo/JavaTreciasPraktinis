@@ -18,20 +18,16 @@ repositories {
 }
 
 dependencies {
-	// JAX-RS via Jersey (required for @Path, @GET, @POST etc. and WADL generation)
 	implementation 'org.springframework.boot:spring-boot-starter-jersey'
-
-	// Core Spring Web (needed alongside Jersey)
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	// Lombok
+	// JAXB - būtina WADL generavimui
+	implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.4'
+	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-
-	// Dev tools (hot reload)
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
