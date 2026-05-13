@@ -1,0 +1,98 @@
+{
+  "info" : {
+    "name" : "Parcel Logistics API",
+    "description" : "JAX-RS REST API for managing logistics parcels with HATEOAS",
+    "schema" : "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item" : [ {
+    "name" : "GET all parcels",
+    "request" : {
+      "method" : "GET",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json"
+      } ],
+      "url" : {
+        "raw" : "http://localhost:8080/api/parcels"
+      }
+    }
+  }, {
+    "name" : "GET parcel by id",
+    "request" : {
+      "method" : "GET",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json"
+      } ],
+      "url" : {
+        "raw" : "http://localhost:8080/api/parcels/1"
+      }
+    }
+  }, {
+    "name" : "POST create parcel",
+    "request" : {
+      "method" : "POST",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json"
+      } ],
+      "url" : {
+        "raw" : "http://localhost:8080/api/parcels"
+      },
+      "body" : {
+        "mode" : "raw",
+        "raw" : "{\n  \"trackingNumber\": \"TRK-TEST-001\",\n  \"recipientName\": \"Test User\",\n  \"deliveryAddress\": \"Gedimino pr. 1, Vilnius\",\n  \"totalWeightKg\": 1.5,\n  \"delivered\": false,\n  \"priorityClass\": \"E\",\n  \"items\": [\n    {\n      \"name\": \"Laptop\",\n      \"weightKg\": 1.2,\n      \"fragile\": true,\n      \"categoryCode\": \"E\"\n    }\n  ]\n}",
+        "options" : {
+          "raw" : {
+            "language" : "json"
+          }
+        }
+      }
+    }
+  }, {
+    "name" : "PUT update parcel",
+    "request" : {
+      "method" : "PUT",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json"
+      } ],
+      "url" : {
+        "raw" : "http://localhost:8080/api/parcels/1"
+      },
+      "body" : {
+        "mode" : "raw",
+        "raw" : "{\n  \"trackingNumber\": \"TRK-TEST-001\",\n  \"recipientName\": \"Test User\",\n  \"deliveryAddress\": \"Gedimino pr. 1, Vilnius\",\n  \"totalWeightKg\": 1.5,\n  \"delivered\": false,\n  \"priorityClass\": \"E\",\n  \"items\": [\n    {\n      \"name\": \"Laptop\",\n      \"weightKg\": 1.2,\n      \"fragile\": true,\n      \"categoryCode\": \"E\"\n    }\n  ]\n}",
+        "options" : {
+          "raw" : {
+            "language" : "json"
+          }
+        }
+      }
+    }
+  }, {
+    "name" : "DELETE parcel",
+    "request" : {
+      "method" : "DELETE",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json"
+      } ],
+      "url" : {
+        "raw" : "http://localhost:8080/api/parcels/2"
+      }
+    }
+  }, {
+    "name" : "GET 404 not found",
+    "request" : {
+      "method" : "GET",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json"
+      } ],
+      "url" : {
+        "raw" : "http://localhost:8080/api/parcels/999"
+      }
+    }
+  } ]
+}

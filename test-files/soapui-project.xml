@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project
+    xmlns:con="http://eviware.com/soapui/config"
+    name="Parcel Logistics API"
+    soapui-version="5.7.0">
+
+  <con:interface name="Parcel API" type="rest"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:type="con:RestService"
+      basePath="/api">
+
+    <con:endpoints>
+      <con:endpoint>http://localhost:8080</con:endpoint>
+    </con:endpoints>
+
+    <con:resource name="parcels" path="/parcels">
+
+      <con:method name="GET all parcels" method="GET">
+        <con:request name="Request 1">
+          <con:endpoint>http://localhost:8080</con:endpoint>
+        </con:request>
+      </con:method>
+
+      <con:method name="POST create parcel" method="POST">
+        <con:request name="Request 1">
+          <con:endpoint>http://localhost:8080</con:endpoint>
+          <con:mediaType>application/json</con:mediaType>
+          <con:requestContent><![CDATA[{
+  "trackingNumber": "TRK-TEST-001",
+  "recipientName": "Test User",
+  "deliveryAddress": "Gedimino pr. 1, Vilnius",
+  "totalWeightKg": 1.5,
+  "delivered": false,
+  "priorityClass": "E",
+  "items": [
+    {
+      "name": "Laptop",
+      "weightKg": 1.2,
+      "fragile": true,
+      "categoryCode": "E"
+    }
+  ]
+}]]></con:requestContent>
+        </con:request>
+      </con:method>
+
+      <con:resource name="{id}" path="/{id}">
+
+        <con:method name="GET parcel by id" method="GET">
+          <con:request name="Request 1">
+            <con:endpoint>http://localhost:8080</con:endpoint>
+          </con:request>
+        </con:method>
+
+        <con:method name="PUT update parcel" method="PUT">
+          <con:request name="Request 1">
+            <con:endpoint>http://localhost:8080</con:endpoint>
+            <con:mediaType>application/json</con:mediaType>
+            <con:requestContent><![CDATA[{
+  "trackingNumber": "TRK-TEST-001",
+  "recipientName": "Test User",
+  "deliveryAddress": "Gedimino pr. 1, Vilnius",
+  "totalWeightKg": 1.5,
+  "delivered": false,
+  "priorityClass": "E",
+  "items": [
+    {
+      "name": "Laptop",
+      "weightKg": 1.2,
+      "fragile": true,
+      "categoryCode": "E"
+    }
+  ]
+}]]></con:requestContent>
+          </con:request>
+        </con:method>
+
+        <con:method name="DELETE parcel" method="DELETE">
+          <con:request name="Request 1">
+            <con:endpoint>http://localhost:8080</con:endpoint>
+          </con:request>
+        </con:method>
+
+      </con:resource>
+    </con:resource>
+  </con:interface>
+</con:soapui-project>

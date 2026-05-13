@@ -1,0 +1,202 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "Parcel Logistics API",
+    "description" : "JAX-RS RESTful Web Service for managing logistics parcels with HATEOAS",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "http://localhost:8080/api",
+    "description" : "Local development server"
+  } ],
+  "paths" : {
+    "/parcels" : {
+      "get" : {
+        "summary" : "Get all parcels",
+        "operationId" : "getAllParcels",
+        "responses" : {
+          "200" : {
+            "description" : "Successful response"
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Create a new parcel",
+        "operationId" : "createParcel",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Parcel"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Parcel created"
+          }
+        }
+      }
+    },
+    "/parcels/{id}" : {
+      "get" : {
+        "summary" : "Get parcel by ID",
+        "operationId" : "getParcelById",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response"
+          },
+          "404" : {
+            "description" : "Parcel not found"
+          }
+        }
+      },
+      "put" : {
+        "summary" : "Update existing parcel",
+        "operationId" : "updateParcel",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Parcel"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Parcel updated"
+          },
+          "404" : {
+            "description" : "Parcel not found"
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete parcel by ID",
+        "operationId" : "deleteParcel",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Parcel deleted"
+          },
+          "404" : {
+            "description" : "Parcel not found"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "PackageItem" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "weightKg" : {
+            "type" : "number",
+            "format" : "float"
+          },
+          "fragile" : {
+            "type" : "boolean"
+          },
+          "categoryCode" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Parcel" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer"
+          },
+          "trackingNumber" : {
+            "type" : "string"
+          },
+          "recipientName" : {
+            "type" : "string"
+          },
+          "deliveryAddress" : {
+            "type" : "string"
+          },
+          "totalWeightKg" : {
+            "type" : "number",
+            "format" : "float"
+          },
+          "delivered" : {
+            "type" : "boolean"
+          },
+          "priorityClass" : {
+            "type" : "string"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PackageItem"
+            }
+          }
+        }
+      },
+      "Link" : {
+        "type" : "object",
+        "properties" : {
+          "rel" : {
+            "type" : "string"
+          },
+          "href" : {
+            "type" : "string"
+          },
+          "method" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ParcelResponse" : {
+        "type" : "object",
+        "properties" : {
+          "parcel" : {
+            "$ref" : "#/components/schemas/Parcel"
+          },
+          "links" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Link"
+            }
+          }
+        }
+      }
+    }
+  }
+}
